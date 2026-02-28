@@ -15,25 +15,33 @@ class CheckModuleActive
      */
 
 
-        public function handle(Request $request, Closure $next, string $module)
+    public function handle(Request $request, Closure $next, string $module)
     {
         $user = $request->user();
 
-        // Vérifie si l'utilisateur est connecté
         if (!$user) {
             return response()->json([
                 'error' => 'Unauthorized.'
             ], 401);
         }
 
-        $isActive = $user->modules()
-            ->where('name', $module)
+        $moduleExists = \App\Models\Module::where('name', $module)
             ->where('active', true)
             ->exists();
 
-        if (!$isActive) {
+        if (!$moduleExists) {
             return response()->json([
-                "error" => "Module inactive. Please activate this module to use it."
+                'error' => "Module not found or inactive."
+            ], 404);
+        }
+
+        $hasAccess = $user->modules()
+            ->where('modules.name', $module)
+            ->exists();
+
+        if (!$hasAccess) {
+            return response()->json([
+                'error' => "You don't have access to this module."
             ], 403);
         }
 

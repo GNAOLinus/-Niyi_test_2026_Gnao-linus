@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\v1\AuthentificationController;
+use App\Http\Controllers\Api\v1\ModuleController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -9,19 +10,19 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::prefix('v1')->group(function () {
-    route::get('/lllll',function(){
+    route::get('/lllll', function () {
         return 'ok';
     })->name('login');
 
 
     Route::post('/register', [AuthentificationController::class, 'register'])
         ->name('api.v1.register')
-    ->middleware('api');
+        ->middleware('api');
 
 
     Route::post('/login', [AuthentificationController::class, 'login'])
         ->name('api.v1.register')
-    ->middleware('api');
+        ->middleware('api');
     //route qui necessite d'etre authentifier en tant qu'users
 
 
@@ -29,14 +30,18 @@ Route::prefix('v1')->group(function () {
 
 
         Route::post('/logout', [AuthentificationController::class, 'logout'])
-        ->name('api.v1.register')
-        ->middleware('api');
+            ->name('api.v1.register')
+            ->middleware('api');
 
 
-        // Route::apiResource('commandes', CommandeController::class)
-            // ->only(['index','show','store', 'update', 'destroy'])
-        // ->middleware('api');
+        Route::apiResource('modules', controller: ModuleController::class)
+            ->only(['index', 'show', 'store', 'update', 'destroy']);
 
+        Route::post('/modules/{id}/activate', [ModuleController::class, 'activate'])
+            ->name('api.v1.modules.activation');
+
+        Route::post('/modules/{id}/deactivate', [ModuleController::class, 'deactivate'])
+            ->name('api.v1.modules.deactivate');
 
     });
 });

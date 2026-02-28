@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Api\v1;
 
 use Illuminate\Foundation\Http\FormRequest;
-use phpDocumentor\Reflection\PseudoTypes\True_;
 
 class RegisterRequest extends FormRequest
 {
