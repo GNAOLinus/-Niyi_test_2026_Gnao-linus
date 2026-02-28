@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\v1\AuthentificationController;
 use App\Http\Controllers\Api\v1\ModuleController;
+use App\Http\Controllers\Api\v1\ShortenedLinkController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -43,5 +44,21 @@ Route::prefix('v1')->group(function () {
         Route::post('/modules/{id}/deactivate', [ModuleController::class, 'deactivate'])
             ->name('api.v1.modules.deactivate');
 
+    });
+
+    Route::middleware(CheckModuleActive::class)->group(function () {
+        // URL Shortener routes
+        Route::post('/shorten', [ShortenedLinkController::class, 'store'])
+            ->name('api.v1.shorten.store');
+        Route::get('/links', [ShortenedLinkController::class, 'index'])
+            ->name('api.v1.links.index');
+        Route::delete('/links/{id}', [ShortenedLinkController::class, 'destroy'])
+            ->name('api.v1.links.destroy');
+
+    });
+
+    Route::middleware('CheckModuleActive:UrlShortener')->group(function () {
+        Route::get('/s/{code}', [ShortenedLinkController::class, 'redirect'])
+            ->name('api.v1.shorten.redirect');
     });
 });
